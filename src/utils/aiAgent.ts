@@ -738,37 +738,51 @@ export async function ingestFilesToRAG(
   }
 
   try {
-    const payload = {
-      rag_id,
-      files: asset_ids.map((asset_id) => ({ asset_id })),
-    }
+    // Use FormData for file ingestion
+    const formData = new FormData()
+    formData.append('rag_id', rag_id)
+
+    // Add each asset_id as a separate 'files' entry
+    asset_ids.forEach((asset_id) => {
+      formData.append('files', JSON.stringify({ asset_id }))
+    })
 
     const response = await fetch(LYZR_RAG_INGEST_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'x-api-key': LYZR_API_KEY,
+        // Don't set Content-Type - let browser set it with boundary
       },
-      body: JSON.stringify(payload),
+      body: formData,
     })
 
-    if (response.ok) {
-      const data = await response.json()
+    const responseText = await response.text()
+    console.log('RAG ingest response:', response.status, responseText)
 
-      return {
-        success: true,
-        files_ingested: asset_ids.length,
-        message: `Successfully ingested ${asset_ids.length} file(s) into knowledge base`,
+    if (response.ok) {
+      try {
+        const data = JSON.parse(responseText)
+        return {
+          success: true,
+          files_ingested: asset_ids.length,
+          message: `Successfully ingested ${asset_ids.length} file(s) into knowledge base`,
+        }
+      } catch {
+        // Response might not be JSON
+        return {
+          success: true,
+          files_ingested: asset_ids.length,
+          message: `Successfully ingested ${asset_ids.length} file(s) into knowledge base`,
+        }
       }
     } else {
-      const errorText = await response.text()
-      console.error('RAG ingest API error:', response.status, errorText)
+      console.error('RAG ingest API error:', response.status, responseText)
 
       return {
         success: false,
         files_ingested: 0,
         message: `Ingestion failed with status ${response.status}`,
-        error: errorText,
+        error: responseText,
       }
     }
   } catch (error) {
