@@ -23,7 +23,7 @@ import {
   Database,
   BookOpen,
 } from 'lucide-react'
-import { callAIAgent, uploadFiles } from '@/utils/aiAgent'
+import { callAIAgent, uploadFiles, ingestFilesToRAG } from '@/utils/aiAgent'
 import type { NormalizedAgentResponse } from '@/utils/aiAgent'
 import { cn } from '@/lib/utils'
 
@@ -346,16 +346,34 @@ export default function Home() {
       const docId = newDocs[i].id
 
       try {
+        // Step 1: Upload file to get asset_id
         const result = await uploadFiles(file)
 
         if (result.success && result.asset_ids.length > 0) {
-          setDocuments((prev) =>
-            prev.map((doc) =>
-              doc.id === docId
-                ? { ...doc, status: 'success', asset_id: result.asset_ids[0] }
-                : doc
+          const assetId = result.asset_ids[0]
+
+          // Step 2: Ingest into RAG knowledge base
+          const ingestResult = await ingestFilesToRAG(RAG_ID, [assetId])
+
+          if (ingestResult.success) {
+            setDocuments((prev) =>
+              prev.map((doc) =>
+                doc.id === docId ? { ...doc, status: 'success', asset_id: assetId } : doc
+              )
             )
-          )
+          } else {
+            setDocuments((prev) =>
+              prev.map((doc) =>
+                doc.id === docId
+                  ? {
+                      ...doc,
+                      status: 'error',
+                      error: ingestResult.error || 'Failed to add to knowledge base',
+                    }
+                  : doc
+              )
+            )
+          }
         } else {
           setDocuments((prev) =>
             prev.map((doc) =>

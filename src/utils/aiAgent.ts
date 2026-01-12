@@ -440,6 +440,7 @@ export async function generateDocs(code: string, agent_id: string): Promise<stri
 // =============================================================================
 
 const LYZR_UPLOAD_URL = 'https://agent-prod.studio.lyzr.ai/v3/assets/upload'
+const LYZR_RAG_INGEST_URL = 'https://rag-prod.studio.lyzr.ai/v2/ingest'
 
 /**
  * Upload result for a single file
@@ -660,5 +661,124 @@ export function useFileUpload() {
     uploading,
     error,
     result,
+  }
+}
+
+// =============================================================================
+// RAG Knowledge Base API
+// =============================================================================
+
+/**
+ * RAG ingestion result
+ */
+export interface RAGIngestResponse {
+  /** Whether the ingestion succeeded */
+  success: boolean
+  /** Number of files successfully ingested */
+  files_ingested: number
+  /** Human-readable message */
+  message: string
+  /** Error message if success is false */
+  error?: string
+}
+
+/**
+ * Ingest uploaded files into a RAG knowledge base
+ *
+ * IMPORTANT: You must first upload files using uploadFiles(), then pass the asset_ids
+ * to this function to add them to the knowledge base.
+ *
+ * @param rag_id - RAG knowledge base ID
+ * @param asset_ids - Array of asset IDs from uploadFiles()
+ * @returns Promise with ingestion response
+ *
+ * @example
+ * ```tsx
+ * // Step 1: Upload files
+ * const uploadResult = await uploadFiles([file1, file2])
+ *
+ * // Step 2: Ingest into knowledge base
+ * if (uploadResult.success) {
+ *   const ingestResult = await ingestFilesToRAG('your-rag-id', uploadResult.asset_ids)
+ *   if (ingestResult.success) {
+ *     console.log('Files added to knowledge base!')
+ *   }
+ * }
+ * ```
+ */
+export async function ingestFilesToRAG(
+  rag_id: string,
+  asset_ids: string[]
+): Promise<RAGIngestResponse> {
+  if (!rag_id) {
+    return {
+      success: false,
+      files_ingested: 0,
+      message: 'RAG ID is required',
+      error: 'RAG ID is required',
+    }
+  }
+
+  if (!asset_ids || asset_ids.length === 0) {
+    return {
+      success: false,
+      files_ingested: 0,
+      message: 'No asset IDs provided',
+      error: 'No asset IDs provided',
+    }
+  }
+
+  if (!LYZR_API_KEY) {
+    return {
+      success: false,
+      files_ingested: 0,
+      message: 'VITE_LYZR_API_KEY not configured',
+      error: 'VITE_LYZR_API_KEY not configured in environment',
+    }
+  }
+
+  try {
+    const payload = {
+      rag_id,
+      files: asset_ids.map((asset_id) => ({ asset_id })),
+    }
+
+    const response = await fetch(LYZR_RAG_INGEST_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': LYZR_API_KEY,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+
+      return {
+        success: true,
+        files_ingested: asset_ids.length,
+        message: `Successfully ingested ${asset_ids.length} file(s) into knowledge base`,
+      }
+    } else {
+      const errorText = await response.text()
+      console.error('RAG ingest API error:', response.status, errorText)
+
+      return {
+        success: false,
+        files_ingested: 0,
+        message: `Ingestion failed with status ${response.status}`,
+        error: errorText,
+      }
+    }
+  } catch (error) {
+    console.error('RAG ingest error:', error)
+
+    return {
+      success: false,
+      files_ingested: 0,
+      message: 'Network error during ingestion',
+      error: error instanceof Error ? error.message : String(error),
+    }
   }
 }
