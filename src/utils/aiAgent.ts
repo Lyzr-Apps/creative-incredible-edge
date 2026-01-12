@@ -440,7 +440,7 @@ export async function generateDocs(code: string, agent_id: string): Promise<stri
 // =============================================================================
 
 const LYZR_UPLOAD_URL = 'https://agent-prod.studio.lyzr.ai/v3/assets/upload'
-const LYZR_RAG_INGEST_URL = 'https://rag-prod.studio.lyzr.ai/ingest'
+const LYZR_RAG_INGEST_URL = 'https://agent-prod.studio.lyzr.ai/v3/rag/ingest'
 
 /**
  * Upload result for a single file
@@ -738,22 +738,19 @@ export async function ingestFilesToRAG(
   }
 
   try {
-    // Use FormData for file ingestion
-    const formData = new FormData()
-    formData.append('rag_id', rag_id)
-
-    // Add each asset_id as a separate 'files' entry
-    asset_ids.forEach((asset_id) => {
-      formData.append('files', JSON.stringify({ asset_id }))
-    })
+    // Use JSON payload for RAG ingestion
+    const payload = {
+      rag_id: rag_id,
+      asset_ids: asset_ids,
+    }
 
     const response = await fetch(LYZR_RAG_INGEST_URL, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'x-api-key': LYZR_API_KEY,
-        // Don't set Content-Type - let browser set it with boundary
       },
-      body: formData,
+      body: JSON.stringify(payload),
     })
 
     const responseText = await response.text()
