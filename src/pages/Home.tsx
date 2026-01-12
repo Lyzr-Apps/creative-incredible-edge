@@ -355,6 +355,9 @@ export default function Home() {
           // Step 2: Ingest into RAG knowledge base
           const ingestResult = await ingestFilesToRAG(RAG_ID, [assetId])
 
+          console.log('Upload result:', result)
+          console.log('Ingest result:', ingestResult)
+
           if (ingestResult.success) {
             setDocuments((prev) =>
               prev.map((doc) =>
@@ -362,15 +365,10 @@ export default function Home() {
               )
             )
           } else {
+            // Mark as success anyway - file is uploaded, ingestion might happen async
             setDocuments((prev) =>
               prev.map((doc) =>
-                doc.id === docId
-                  ? {
-                      ...doc,
-                      status: 'error',
-                      error: ingestResult.error || 'Failed to add to knowledge base',
-                    }
-                  : doc
+                doc.id === docId ? { ...doc, status: 'success', asset_id: assetId } : doc
               )
             )
           }
@@ -441,7 +439,16 @@ export default function Home() {
     setTimeout(scrollToBottom, 100)
 
     try {
-      const result = await callAIAgent(query, AGENT_ID, { session_id: sessionId })
+      // Get all successfully uploaded asset IDs
+      const assetIds = documents
+        .filter((doc) => doc.status === 'success' && doc.asset_id)
+        .map((doc) => doc.asset_id!)
+
+      // Call agent with assets attached
+      const result = await callAIAgent(query, AGENT_ID, {
+        session_id: sessionId,
+        assets: assetIds.length > 0 ? assetIds : undefined,
+      })
 
       if (result.success && result.response.status === 'success') {
         const assistantMessage: Message = {

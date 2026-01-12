@@ -440,7 +440,7 @@ export async function generateDocs(code: string, agent_id: string): Promise<stri
 // =============================================================================
 
 const LYZR_UPLOAD_URL = 'https://agent-prod.studio.lyzr.ai/v3/assets/upload'
-const LYZR_RAG_INGEST_URL = 'https://rag-prod.studio.lyzr.ai/v2/ingest'
+const LYZR_RAG_INGEST_URL = 'https://rag-prod.studio.lyzr.ai/ingest'
 
 /**
  * Upload result for a single file
