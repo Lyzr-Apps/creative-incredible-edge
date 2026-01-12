@@ -1,0 +1,60 @@
+{
+  "agent_name": "Knowledge Search Agent",
+  "agent_id": "6964a295ee6d749fb303a7b7",
+  "agent_purpose": "rag_search",
+  "description": "RAG-powered agent that searches through uploaded PDF documents to provide accurate, contextual answers with source citations. Returns answer text, source references, confidence score, and related follow-up questions.",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "answer": "string",
+      "sources": [
+        "any"
+      ],
+      "confidence": "number",
+      "related_questions": [
+        "string"
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "error",
+    "result": {
+      "answer": "No relevant information was found in the knowledge base to answer your query. Please consider refining your question or providing more specific details.",
+      "sources": [],
+      "confidence": 0.0,
+      "related_questions": [
+        "Can you specify the topic or document you're interested in?",
+        "Do you have a particular question about a document's content?",
+        "Would you like assistance uploading a PDF for analysis?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Knowledge Search Agent",
+      "timestamp": "2024-06-13T09:58:36Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-01-12T07:29:47.275197",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "error",
+    "result": {
+      "answer": "No relevant information was found in the knowledge base to answer your query. Please consider refining your question or providing more specific details.",
+      "sources": [],
+      "confidence": 0.0,
+      "related_questions": [
+        "Can you specify the topic or document you're interested in?",
+        "Do you have a particular question about a document's content?",
+        "Would you like assistance uploading a PDF for analysis?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Knowledge Search Agent",
+      "timestamp": "2024-06-13T09:58:36Z"
+    }
+  }
+}

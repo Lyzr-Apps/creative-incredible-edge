@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "user_input",
+      "type": "Input",
+      "label": "User Query",
+      "nodeCategory": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "id": "knowledge_search_agent",
+      "type": "Agent",
+      "label": "Knowledge Search Agent",
+      "nodeCategory": "agent",
+      "position": {
+        "x": 400,
+        "y": 200
+      },
+      "data": {
+        "agent_id": "6964a295ee6d749fb303a7b7",
+        "agent_name": "Knowledge Search Agent",
+        "description": "Searches through uploaded PDF documents using RAG to provide accurate, contextual answers with source citations",
+        "has_knowledge_base": true,
+        "rag_id": "6964a281ee189869130613de"
+      }
+    },
+    {
+      "id": "search_results",
+      "type": "Output",
+      "label": "Search Results",
+      "nodeCategory": "end",
+      "position": {
+        "x": 700,
+        "y": 200
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "user_input",
+      "target": "knowledge_search_agent"
+    },
+    {
+      "source": "knowledge_search_agent",
+      "target": "search_results"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-01-12T00:00:00Z",
+    "workflow_type": "single_agent_with_knowledge_base",
+    "total_agents": 1
+  }
+}

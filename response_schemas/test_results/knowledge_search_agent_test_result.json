@@ -1,0 +1,26 @@
+{
+  "agent_name": "Knowledge Search Agent",
+  "agent_id": "6964a295ee6d749fb303a7b7",
+  "test_message": "What information is available in the knowledge base?",
+  "expected_purpose": "rag_search",
+  "timestamp": "2026-01-12T07:29:26.757321",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "answer": "There is currently no specific information available in the knowledge base. No document excerpts or details are present at this time. Please upload relevant PDF documents or refine your query so I can assist you further.",
+      "sources": [],
+      "confidence": 0.2,
+      "related_questions": [
+        "How do I upload documents to the knowledge base?",
+        "What types of information can be stored in the knowledge base?"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Knowledge Search Agent",
+      "timestamp": "2024-06-09T19:54:28Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"answer\": \"There is currently no specific information available in the knowledge base. No document excerpts or details are present at this time. Please upload relevant PDF documents or refine your query so I can assist you further.\",\n    \"sources\": [],\n    \"confidence\": 0.2,\n    \"related_questions\": [\n      \"How do I upload documents to the knowledge base?\",\n      \"What types of information can be stored in the knowledge base?\"\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Knowledge Search Agent\",\n    \"timestamp\": \"2024-06-09T19:54:28Z\"\n  }\n}"
+}

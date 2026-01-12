@@ -1,0 +1,31 @@
+{
+  "workflow_created": true,
+  "agents": [
+    {
+      "agent_id": "6964a295ee6d749fb303a7b7",
+      "agent_name": "Knowledge Search Agent",
+      "agent_type": "single",
+      "status": "created",
+      "has_knowledge_base": true,
+      "rag_id": "6964a281ee189869130613de",
+      "rag_name": "pdfdocumentsknowledgebasexulf",
+      "response_schema_file": "response_schemas/knowledge_search_agent_response.json",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.3,
+      "top_p": 1
+    }
+  ],
+  "knowledge_bases": [
+    {
+      "rag_id": "6964a281ee189869130613de",
+      "rag_name": "pdfdocumentsknowledgebasexulf",
+      "name": "PDF Documents Knowledge Base",
+      "description": "Knowledge base for storing and searching through uploaded PDF documents with RAG capabilities",
+      "used_by_agents": ["6964a295ee6d749fb303a7b7"]
+    }
+  ],
+  "total_agents": 1,
+  "completed": true,
+  "timestamp": "2026-01-12T00:00:00Z"
+}
